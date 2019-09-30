@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-//usage:
-//intent: 
+//usage: put this on an item with a rigidbody
+//intent: allow player to pick up and move around with objects
+
 public class PickUp : MonoBehaviour
 {
     public Transform destination; 
