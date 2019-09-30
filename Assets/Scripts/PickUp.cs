@@ -24,6 +24,7 @@ public class PickUp : MonoBehaviour
     }
 
     void pickup() {
+        Debug.Log("picking up item. Debug statement coming from pickup script");
         GetComponent<Rigidbody>().useGravity = false;
         this.transform.position = destination.position;
         this.transform.parent = GameObject.Find("Destination").transform;

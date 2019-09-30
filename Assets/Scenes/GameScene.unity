@@ -328,9 +328,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 12ddc7fc774794e5eab86f81bb7e64a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  objectDestination: {fileID: 1571985000}
   destination: {fileID: 1571985001}
   toPickup: {fileID: 719334171}
+  secondItem: {fileID: 1220484505}
 --- !u!54 &610015416
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -465,7 +465,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 719334171}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4a1c67603e5854efea73285c40988873, type: 3}
   m_Name: 

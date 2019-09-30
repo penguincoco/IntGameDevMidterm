@@ -7,23 +7,30 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
+    //variables to handle player movement
     Rigidbody myRigidBody;
     Vector3 myInput; 
+
+    //variables to handle player picking up an object
     bool canPickup;
-    public GameObject objectDestination;
-    GameObject[] pickupableItems;
+    bool isHolding;
+    List<GameObject> pickupableItems;
     public Transform destination;
     float range;
     public GameObject toPickup;
-
+    public GameObject secondItem;
 
     void Start()
     {
         myRigidBody = GetComponent<Rigidbody>();
         range = 1.5f;
         canPickup = true;
-        pickupableItems = GameObject.FindGameObjectsWithTag("Pickupable Item");
-        Debug.Log(pickupableItems.Length);
+        isHolding = false;
+        pickupableItems = new List<GameObject>();
+        foreach (GameObject item in GameObject.FindGameObjectsWithTag("Pickupable Item")) {
+            pickupableItems.Add(item);
+        }
+        //pickupableItems = GameObject.FindGameObjectsWithTag("Pickupable Item");
     }
 
     void Update()
@@ -34,22 +41,31 @@ public class PlayerMovement : MonoBehaviour
         myInput = horizontal * transform.right;
         myInput += vertical * transform.forward; 
 
-        //don't let the player pick up an item if they're already holding one 
-        if (objectDestination.transform.childCount != 0) {
-            Debug.Log("The player is currently holding something");
-            canPickup = false; 
-        }
-        else {
-            canPickup = true;
+        foreach (GameObject item in pickupableItems) {
+            //detect when an item is picked up
+            if (Input.GetKey(KeyCode.E) && (destination.transform.position - item.transform.position).sqrMagnitude < range * range) {
+                //PickUp.cs will execute the pickup 
+                //remove and store that item that's being picked up from the list, turn off all of the
+                //scripts for the other items to prevent being able to pick things up
+                GameObject pickedUpItem = item;
+                pickupableItems.Remove(item);
+                foreach (GameObject otherItems in pickupableItems) {
+                    otherItems.GetComponent<PickUp>().enabled = false;
+                    Debug.Log("Accessing the scripts in other gameobjects");
+                }
+            }
+            // else {
+            //     drop(item);
+            // }
         }
 
 
-        if (canPickup && Input.GetKey(KeyCode.E) && (destination.transform.position - toPickup.transform.position).sqrMagnitude < range * range) {
-            pickup(toPickup);
-        }
-        else {
-            drop(toPickup);
-        }
+        // if (canPickup && Input.GetKey(KeyCode.E) && (destination.transform.position - toPickup.transform.position).sqrMagnitude < range * range) {
+        //     pickup(toPickup);
+        // }
+        // else if (isHolding) {
+        //     drop(toPickup);
+        // }
     }
 
     void FixedUpdate() {
@@ -61,7 +77,6 @@ public class PlayerMovement : MonoBehaviour
         GetComponent<Rigidbody>().useGravity = false;
         item.transform.position = destination.position;
         item.transform.parent = GameObject.Find("Destination").transform;
-        canPickup = false;
     }
 
     void drop(GameObject item) {
@@ -69,6 +84,5 @@ public class PlayerMovement : MonoBehaviour
         //Debug.Log("Dropping item");
         GetComponent<Rigidbody>().useGravity = true;
         item.transform.parent = null;
-        canPickup = true;
     }
 }
