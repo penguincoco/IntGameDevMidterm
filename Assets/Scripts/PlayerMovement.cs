@@ -42,23 +42,19 @@ public class PlayerMovement : MonoBehaviour
         myInput += vertical * transform.forward; 
 
         foreach (GameObject item in pickupableItems) {
-            //detect when an item is picked up
             if (Input.GetKey(KeyCode.E) && (destination.transform.position - item.transform.position).sqrMagnitude < range * range) {
-                //PickUp.cs will execute the pickup 
-                //remove and store that item that's being picked up from the list, turn off all of the
-                //scripts for the other items to prevent being able to pick things up
-                GameObject pickedUpItem = item;
-                pickupableItems.Remove(item);
-                foreach (GameObject otherItems in pickupableItems) {
-                    otherItems.GetComponent<PickUp>().enabled = false;
-                    Debug.Log("Accessing the scripts in other gameobjects");
+                foreach (GameObject otherItem in pickupableItems) {
+                    if (otherItem != item) {
+                        otherItem.GetComponent<PickUp>().enabled = false;
+                    }
                 }
             }
-            // else {
-            //     drop(item);
-            // }
+            else {
+                foreach (GameObject otherItem in pickupableItems) {
+                    otherItem.GetComponent<PickUp>().enabled = true; 
+                }
+            }
         }
-
 
         // if (canPickup && Input.GetKey(KeyCode.E) && (destination.transform.position - toPickup.transform.position).sqrMagnitude < range * range) {
         //     pickup(toPickup);
