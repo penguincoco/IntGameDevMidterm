@@ -18,11 +18,6 @@ public class PickUp : MonoBehaviour
         if (Input.GetKey(KeyCode.E) && (destination.transform.position - transform.position).sqrMagnitude < range * range) {
             pickup();
         }
-        // if (isPressed) {
-        //     GetComponent<Rigidbody>().useGravity = false;
-        //     this.transform.position = destination.position;
-        //     this.transform.parent = GameObject.Find("Destination").transform;
-        // }
         else {
             drop();
         }
@@ -35,14 +30,8 @@ public class PickUp : MonoBehaviour
     }
 
     void drop() {
+        //Debug.Log("Dropping item");
         GetComponent<Rigidbody>().useGravity = true;
+        this.transform.parent = null;
     }
-
-    // void OnMouseDown() {
-    //     isPressed = true;
-    // }
-
-    // void OnMouseUp() {
-    //     isPressed = false;
-    // }
 }
