@@ -12,11 +12,15 @@ public class PlayerMovement : MonoBehaviour
     bool canPickup;
     public GameObject objectDestination;
     GameObject[] pickupableItems;
+    public Transform destination;
+    float range;
+    public GameObject toPickup;
 
 
     void Start()
     {
         myRigidBody = GetComponent<Rigidbody>();
+        range = 1.5f;
         canPickup = true;
         pickupableItems = GameObject.FindGameObjectsWithTag("Pickupable Item");
         Debug.Log(pickupableItems.Length);
@@ -38,19 +42,33 @@ public class PlayerMovement : MonoBehaviour
         else {
             canPickup = true;
         }
-        
-        //current issue: this turns off the script in all the items that can
-        //be picked up, which means this will turn off the script on the cube
-        //that is being held which is handling the dropping
-        // if (!canPickup) {
-        //     Debug.Log("player is holding something and can't pick anything else up");
-        //     foreach (GameObject item in pickupableItems) {
-        //         item.GetComponent<PickUp>().enabled = false;
-        //     }    
-        // }    
+
+
+        if (canPickup && Input.GetKey(KeyCode.E) && (destination.transform.position - toPickup.transform.position).sqrMagnitude < range * range) {
+            pickup(toPickup);
+        }
+        else {
+            drop(toPickup);
+        }
     }
 
     void FixedUpdate() {
         myRigidBody.velocity = myInput * 10f;
+    }
+
+    void pickup(GameObject item) {
+        Debug.Log("item being picked up");
+        GetComponent<Rigidbody>().useGravity = false;
+        item.transform.position = destination.position;
+        item.transform.parent = GameObject.Find("Destination").transform;
+        canPickup = false;
+    }
+
+    void drop(GameObject item) {
+        canPickup = true;
+        //Debug.Log("Dropping item");
+        GetComponent<Rigidbody>().useGravity = true;
+        item.transform.parent = null;
+        canPickup = true;
     }
 }

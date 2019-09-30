@@ -19,6 +19,7 @@ public class StackItems : MonoBehaviour
     {
         if ((otherBox.transform.position - transform.position).sqrMagnitude < range * range) {
             Debug.Log("two boxes are close together");
+            stackText.text = "press x to stack items"; 
         }
         //if two stackable items are near each other, display text saying 
         //press 'r' to stack items
