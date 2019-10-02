@@ -9,6 +9,9 @@ public class MouseLook : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        Cursor.lockState = CursorLockMode.Locked; 
+        Cursor.visible = false;
+        
         //returns 0 if we aren't moving the mouse
         float mouseX = Input.GetAxis("Mouse X"); //horizontal mouse velocity
         float mouseY = Input.GetAxis("Mouse Y"); //vertical mouse velocity 

@@ -14,23 +14,17 @@ public class PlayerMovement : MonoBehaviour
     //variables to handle player picking up an object
     bool canPickup;
     bool isHolding;
+    private GameObject holdingObject;
+
     List<GameObject> pickupableItems;
     public Transform destination;
     float range;
-    public GameObject toPickup;
-    public GameObject secondItem;
 
     void Start()
     {
         myRigidBody = GetComponent<Rigidbody>();
         range = 1.5f;
-        canPickup = true;
-        isHolding = false;
-        pickupableItems = new List<GameObject>();
-        foreach (GameObject item in GameObject.FindGameObjectsWithTag("Pickupable Item")) {
-            pickupableItems.Add(item);
-        }
-        //pickupableItems = GameObject.FindGameObjectsWithTag("Pickupable Item");
+        canPickup = false;
     }
 
     void Update()
@@ -41,27 +35,36 @@ public class PlayerMovement : MonoBehaviour
         myInput = horizontal * transform.right;
         myInput += vertical * transform.forward; 
 
-        foreach (GameObject item in pickupableItems) {
-            if (Input.GetKey(KeyCode.E) && (destination.transform.position - item.transform.position).sqrMagnitude < range * range) {
-                foreach (GameObject otherItem in pickupableItems) {
-                    if (otherItem != item) {
-                        otherItem.GetComponent<PickUp>().enabled = false;
-                    }
-                }
-            }
-            else {
-                foreach (GameObject otherItem in pickupableItems) {
-                    otherItem.GetComponent<PickUp>().enabled = true; 
-                }
+        Ray myRay = new Ray(transform.position, transform.forward); 
+        float rayDistance = 2f;
+
+        Debug.DrawRay(myRay.origin, myRay.direction * rayDistance, Color.blue);
+
+        RaycastHit rayHit = new RaycastHit();
+        GameObject item = null;
+
+        if (Physics.Raycast(myRay, out rayHit, rayDistance)) {
+            //if it hits then you can pick up the item
+            if (rayHit.collider.gameObject.tag == "Pickupable Item") {
+                Debug.Log("Can pick up an item!");
+                item = rayHit.collider.gameObject;
+                canPickup = true;
             }
         }
+        else {
+            canPickup = false;
+        }
 
-        // if (canPickup && Input.GetKey(KeyCode.E) && (destination.transform.position - toPickup.transform.position).sqrMagnitude < range * range) {
-        //     pickup(toPickup);
-        // }
-        // else if (isHolding) {
-        //     drop(toPickup);
-        // }
+        if (canPickup && Input.GetKey(KeyCode.E)) {
+            pickup(item);
+        }
+        else if (holdingObject != null && Input.GetKeyUp(KeyCode.E)) {
+            drop(holdingObject);
+        }
+
+        //cooldown after dropping an iteam that another one can't be picked up and
+        //prevent spamming the stack button so the boxes don't keep flying up before hitting
+        //the ground again
     }
 
     void FixedUpdate() {
@@ -69,16 +72,18 @@ public class PlayerMovement : MonoBehaviour
     }
 
     void pickup(GameObject item) {
+        holdingObject = item;
         Debug.Log("item being picked up");
-        GetComponent<Rigidbody>().useGravity = false;
+        item.GetComponent<Rigidbody>().useGravity = false;
+        item.GetComponent<Rigidbody>().isKinematic = true;
         item.transform.position = destination.position;
         item.transform.parent = GameObject.Find("Destination").transform;
     }
 
     void drop(GameObject item) {
-        canPickup = true;
-        //Debug.Log("Dropping item");
-        GetComponent<Rigidbody>().useGravity = true;
+        item.GetComponent<Rigidbody>().useGravity = true;
+        item.GetComponent<Rigidbody>().isKinematic = false;
         item.transform.parent = null;
+        holdingObject = null;
     }
 }
