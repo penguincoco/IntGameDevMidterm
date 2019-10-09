@@ -7,6 +7,7 @@ TagManager:
   - Pickupable Item
   - Destination
   - Floor
+  - Win Item
   layers:
   - Default
   - TransparentFX
