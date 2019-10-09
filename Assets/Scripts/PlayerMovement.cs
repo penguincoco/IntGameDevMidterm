@@ -10,31 +10,56 @@ public class PlayerMovement : MonoBehaviour
     //variables to handle player movement
     Rigidbody myRigidBody;
     Vector3 myInput; 
+    bool isGrounded; 
+    //Vector3 jump;
+    public float jumpForce; 
 
     //variables to handle player picking up an object
     bool canPickup;
     bool isHolding;
     private GameObject holdingObject;
-
-    List<GameObject> pickupableItems;
     public Transform destination;
-    float range;
+    float speed;
 
     void Start()
     {
         myRigidBody = GetComponent<Rigidbody>();
-        range = 1.5f;
         canPickup = false;
+        jumpForce = 5f;
+        isGrounded = true;
+        speed = 5f;
     }
 
     void Update()
     {
+        //handle basic player movement with WASD/arrow keys 
         float horizontal = Input.GetAxis("Horizontal"); //move with A/D or left/right
         float vertical = Input.GetAxis("Vertical"); //move with W/S or up/down
+        float jump = Input.GetAxis("Jump");
 
         myInput = horizontal * transform.right;
         myInput += vertical * transform.forward; 
 
+        //handle player jumping
+        if (Input.GetKeyDown(KeyCode.Space) && isGrounded) {
+            
+            myRigidBody.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+        }
+        
+        Ray jumpRay = new Ray(transform.position, Vector3.down);
+
+        float jumpRayDist = 1.1f;
+
+        Debug.DrawRay(jumpRay.origin, jumpRay.direction * jumpRayDist, Color.blue);
+        
+        if (Physics.Raycast(jumpRay, jumpRayDist)) {
+            isGrounded = true;
+        }
+        else {
+            isGrounded = false;
+        }
+
+        //handle player picking up and dropping objects
         Ray myRay = new Ray(transform.position, transform.forward); 
         float rayDistance = 2f;
 
@@ -43,10 +68,9 @@ public class PlayerMovement : MonoBehaviour
         RaycastHit rayHit = new RaycastHit();
         GameObject item = null;
 
-        if (Physics.Raycast(myRay, out rayHit, rayDistance)) {
+        if (Physics.SphereCast(myRay, 0.5f, out rayHit, rayDistance)) {
             //if it hits then you can pick up the item
             if (rayHit.collider.gameObject.tag == "Pickupable Item") {
-                Debug.Log("Can pick up an item!");
                 item = rayHit.collider.gameObject;
                 canPickup = true;
             }
@@ -55,10 +79,10 @@ public class PlayerMovement : MonoBehaviour
             canPickup = false;
         }
 
-        if (canPickup && Input.GetKey(KeyCode.E)) {
+        if (canPickup && holdingObject == null && Input.GetKeyDown(KeyCode.E)) {
             pickup(item);
         }
-        else if (holdingObject != null && Input.GetKeyUp(KeyCode.E)) {
+        else if (holdingObject != null && Input.GetKeyDown(KeyCode.E)) {
             drop(holdingObject);
         }
 
@@ -68,22 +92,23 @@ public class PlayerMovement : MonoBehaviour
     }
 
     void FixedUpdate() {
-        myRigidBody.velocity = myInput * 10f;
+        // myRigidBody.AddForce( myInput * 100f );
+        //myRigidBody.velocity = myInput * 10f;
+        myRigidBody.velocity = new Vector3(myInput.x * speed, myRigidBody.velocity.y, myInput.z * speed);
     }
 
     void pickup(GameObject item) {
         holdingObject = item;
-        Debug.Log("item being picked up");
         item.GetComponent<Rigidbody>().useGravity = false;
         item.GetComponent<Rigidbody>().isKinematic = true;
         item.transform.position = destination.position;
         item.transform.parent = GameObject.Find("Destination").transform;
     }
 
-    void drop(GameObject item) {
+    public void drop(GameObject item) {
         item.GetComponent<Rigidbody>().useGravity = true;
         item.GetComponent<Rigidbody>().isKinematic = false;
         item.transform.parent = null;
         holdingObject = null;
     }
-}
+ }

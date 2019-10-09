@@ -8,32 +8,46 @@ using TMPro;
 
 public class StackItems : MonoBehaviour
 {
-    public GameObject otherBox; 
     GameObject[] stackableItems; 
-    public TextMeshProUGUI stackText; 
-    public float range;
+    public TextMeshProUGUI stackText;
+    bool isNear;
+    public GameObject player; 
 
     void Start() {
         stackableItems = GameObject.FindGameObjectsWithTag("Pickupable Item");
-        range = 2.5f;
+        isNear = false;
     }
     // Update is called once per frame
     void Update()
     {
-        if ((otherBox.transform.position - transform.position).sqrMagnitude < range * range) {
-            Debug.Log("two boxes are close together");
-            stackText.text = "press x to stack items"; 
-            if (Input.GetKeyDown(KeyCode.X)) {
-                Debug.Log("stacking one box on top of another");
-                transform.position = otherBox.transform.position + new Vector3(0f, 1f, 0f);
+        //each box will do a raycast as well to chek if they are near another object that
+        //they can be stacked on top of
+
+        Ray myRay = new Ray(transform.position, transform.forward); 
+        float rayDistance = 3f;
+
+        Debug.DrawRay(myRay.origin, myRay.direction * rayDistance, Color.green);
+        RaycastHit rayHit = new RaycastHit();
+        GameObject item = null;
+
+        if (Physics.Raycast(myRay, out rayHit, rayDistance)) {
+            //if it hits then you can pick up the item
+            if (rayHit.collider.gameObject.tag == "Pickupable Item") {
+                Debug.Log("Near another object");
+                item = rayHit.collider.gameObject;
+                isNear = true;
             }
         }
-        else {
-            stackText.text = "";
+
+        if (isNear) {
+            stackText.text = "press x to stack items"; 
         }
-    }
 
-    void stackItem() {
-
+        if (isNear && Input.GetKeyDown(KeyCode.X)) {
+            Debug.Log("Stacking items");
+            transform.position = item.transform.position + new Vector3(0f, 3f, 0f);
+            //access the playermovement script and call Drop()
+            player.GetComponent<PlayerMovement>().drop(gameObject);
+        }
     }
 }
