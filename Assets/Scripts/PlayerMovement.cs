@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 //usage: put this on a cube with a Rigidbody
 //intent: let player use WASD/arrows to move cube around
@@ -16,10 +17,12 @@ public class PlayerMovement : MonoBehaviour
 
     //variables to handle player picking up an object
     bool canPickup;
-    bool isHolding;
-    private GameObject holdingObject;
+    public GameObject holdingObject;
     public Transform destination;
     float speed;
+
+    //variable for setting command text when a player is near an object that they can pick up
+    public TextMeshProUGUI pickupText;
 
     void Start()
     {
@@ -35,14 +38,12 @@ public class PlayerMovement : MonoBehaviour
         //handle basic player movement with WASD/arrow keys 
         float horizontal = Input.GetAxis("Horizontal"); //move with A/D or left/right
         float vertical = Input.GetAxis("Vertical"); //move with W/S or up/down
-        float jump = Input.GetAxis("Jump");
 
         myInput = horizontal * transform.right;
         myInput += vertical * transform.forward; 
 
         //handle player jumping
         if (Input.GetKeyDown(KeyCode.Space) && isGrounded) {
-            
             myRigidBody.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
         }
         
@@ -77,6 +78,14 @@ public class PlayerMovement : MonoBehaviour
         }
         else {
             canPickup = false;
+            pickupText.text = "";
+        }
+
+        if (canPickup) {
+            pickupText.text = "press 'E' to pick up item";
+        }
+        if (holdingObject) {
+            pickupText.text = "";
         }
 
         if (canPickup && holdingObject == null && Input.GetKeyDown(KeyCode.E)) {
@@ -92,12 +101,11 @@ public class PlayerMovement : MonoBehaviour
     }
 
     void FixedUpdate() {
-        // myRigidBody.AddForce( myInput * 100f );
-        //myRigidBody.velocity = myInput * 10f;
         myRigidBody.velocity = new Vector3(myInput.x * speed, myRigidBody.velocity.y, myInput.z * speed);
     }
 
     void pickup(GameObject item) {
+        pickupText.text = "";
         holdingObject = item;
         item.GetComponent<Rigidbody>().useGravity = false;
         item.GetComponent<Rigidbody>().isKinematic = true;

@@ -24,7 +24,7 @@ public class StackItems : MonoBehaviour
         //they can be stacked on top of
 
         Ray myRay = new Ray(transform.position, transform.forward); 
-        float rayDistance = 3f;
+        float rayDistance = 1.5f;
 
         Debug.DrawRay(myRay.origin, myRay.direction * rayDistance, Color.green);
         RaycastHit rayHit = new RaycastHit();
@@ -42,9 +42,12 @@ public class StackItems : MonoBehaviour
         if (isNear) {
             stackText.text = "press x to stack items"; 
         }
+        else {
+            stackText.text = "";
+        }
 
-        if (isNear && Input.GetKeyDown(KeyCode.X)) {
-            Debug.Log("Stacking items");
+    if (isNear && Input.GetKeyDown(KeyCode.X) && player.GetComponent<PlayerMovement>().holdingObject != null) {
+            stackText.text = "";
             transform.position = item.transform.position + new Vector3(0f, 3f, 0f);
             //access the playermovement script and call Drop()
             player.GetComponent<PlayerMovement>().drop(gameObject);
