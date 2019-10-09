@@ -29,7 +29,7 @@ public class PlayerMovement : MonoBehaviour
     {
         myRigidBody = GetComponent<Rigidbody>();
         canPickup = false;
-        jumpForce = 5f;
+        jumpForce = 7.5f;
         isGrounded = true;
         speed = 5f;
     }
@@ -101,10 +101,6 @@ public class PlayerMovement : MonoBehaviour
         else if (holdingObject != null && Input.GetKeyDown(KeyCode.E)) {
             drop(holdingObject);
         }
-
-        //cooldown after dropping an iteam that another one can't be picked up and
-        //prevent spamming the stack button so the boxes don't keep flying up before hitting
-        //the ground again
     }
 
     void FixedUpdate() {
@@ -120,6 +116,12 @@ public class PlayerMovement : MonoBehaviour
         holdingObject = item;
         item.GetComponent<Rigidbody>().useGravity = false;
         item.GetComponent<Rigidbody>().isKinematic = true;
+
+        GameObject destinationObj = GameObject.Find("Destination");
+        
+        item.GetComponent<BoxCollider>().enabled = false; 
+        destinationObj.GetComponent<BoxCollider>().enabled = true;
+
         item.transform.position = destination.position;
         item.transform.parent = GameObject.Find("Destination").transform;
     }
@@ -129,5 +131,10 @@ public class PlayerMovement : MonoBehaviour
         item.GetComponent<Rigidbody>().isKinematic = false;
         item.transform.parent = null;
         holdingObject = null;
+
+        GameObject destinationObj = GameObject.Find("Destination");
+        
+        item.GetComponent<BoxCollider>().enabled = true; 
+        destinationObj.GetComponent<BoxCollider>().enabled = false;
     }
  }
