@@ -41,7 +41,6 @@ public class StackItems : MonoBehaviour
             stackText.text = "press 'X' to stack items"; 
         }
         else {
-            Debug.Log("Clearing the stack text");
             stackText.text = "";
         }
 

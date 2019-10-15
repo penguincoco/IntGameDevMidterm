@@ -23,7 +23,7 @@ public class PlayerMovement : MonoBehaviour
 
     //variable for setting command text when a player is near an object that they can pick up
     public TextMeshProUGUI pickupText;
-    public TextMeshProUGUI winText;
+    //public TextMeshProUGUI winText;
 
     void Start()
     {
@@ -108,10 +108,10 @@ public class PlayerMovement : MonoBehaviour
     }
 
     void pickup(GameObject item) {
-        if (item.tag == "Win Item") {
-            winText.text = "Congrats! \nYou've won! \n Press '1' to restart";
-            this.enabled = false;
-        }
+        // if (item.tag == "Win Item") {
+        //     winText.text = "Congrats! \nYou've won! \n Press '1' to restart";
+        //     this.enabled = false;
+        // }
         pickupText.text = "";
         holdingObject = item;
         item.GetComponent<Rigidbody>().useGravity = false;
