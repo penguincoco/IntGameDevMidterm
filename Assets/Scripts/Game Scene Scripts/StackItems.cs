@@ -9,11 +9,11 @@ using TMPro;
 public class StackItems : MonoBehaviour
 {
     public TextMeshProUGUI stackText;
-    bool isNear;
+    bool isNear = false;
     public GameObject player; 
 
     void Start() {
-        isNear = false;
+       
     }
     // Update is called once per frame
     void Update()
@@ -37,8 +37,8 @@ public class StackItems : MonoBehaviour
         }
 
         if (isNear && player.GetComponent<PlayerMovement>().holdingObject != null) {
-            Debug.Log("changing stack text");
             stackText.text = "press 'X' to stack items"; 
+            Debug.Log("changing stack text");
         }
         else {
             stackText.text = "";
@@ -49,5 +49,9 @@ public class StackItems : MonoBehaviour
             player.GetComponent<PlayerMovement>().drop(gameObject);
             isNear = false;
         }    
+    }
+
+    void OnDisable() {
+        stackText.text = "";
     }
 }

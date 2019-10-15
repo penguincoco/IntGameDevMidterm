@@ -114,6 +114,8 @@ public class PlayerMovement : MonoBehaviour
 
         item.transform.position = destination.position;
         item.transform.parent = GameObject.Find("Destination").transform;
+
+        item.GetComponent<StackItems>().enabled = true;
     }
 
     //made public so StackItems can call this function
@@ -127,5 +129,7 @@ public class PlayerMovement : MonoBehaviour
         
         item.GetComponent<BoxCollider>().enabled = true; 
         destinationObj.GetComponent<BoxCollider>().enabled = false;
+
+        item.GetComponent<StackItems>().enabled = false;
     }
  }
