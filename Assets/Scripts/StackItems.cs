@@ -3,27 +3,22 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-//usage: put this on an item that can be stacked on top of another
+//usage: put this on an item that can be picked up and stacked on top of another
 //intent: player can stack items on top of one another
 
 public class StackItems : MonoBehaviour
 {
-    GameObject[] stackableItems; 
     public TextMeshProUGUI stackText;
     bool isNear;
     public GameObject player; 
 
     void Start() {
-        stackableItems = GameObject.FindGameObjectsWithTag("Pickupable Item");
         isNear = false;
     }
     // Update is called once per frame
     void Update()
     {
-        //each box will do a raycast as well to chek if they are near another object that
-        //they can be stacked on top of
-
-        Ray myRay = new Ray(transform.position, transform.forward); 
+        Ray myRay = new Ray(transform.position, player.transform.forward); 
         float rayDistance = 1.5f;
 
         Debug.DrawRay(myRay.origin, myRay.direction * rayDistance, Color.green);
@@ -33,24 +28,27 @@ public class StackItems : MonoBehaviour
         if (Physics.Raycast(myRay, out rayHit, rayDistance)) {
             //if it hits then you can pick up the item
             if (rayHit.collider.gameObject.tag == "Pickupable Item") {
-                Debug.Log("Near another object");
                 item = rayHit.collider.gameObject;
                 isNear = true;
             }
         }
+        else {
+            isNear = false;
+        }
 
-        if (isNear) {
-            stackText.text = "press x to stack items"; 
+        if (isNear && player.GetComponent<PlayerMovement>().holdingObject != null) {
+            Debug.Log("changing stack text");
+            stackText.text = "press 'X' to stack items"; 
         }
         else {
+            Debug.Log("Clearing the stack text");
             stackText.text = "";
         }
 
-    if (isNear && Input.GetKeyDown(KeyCode.X) && player.GetComponent<PlayerMovement>().holdingObject != null) {
-            stackText.text = "";
+        if (isNear && Input.GetKeyDown(KeyCode.X) && player.GetComponent<PlayerMovement>().holdingObject != null && item != null) {
             transform.position = item.transform.position + new Vector3(0f, 3f, 0f);
-            //access the playermovement script and call Drop()
             player.GetComponent<PlayerMovement>().drop(gameObject);
-        }
+            isNear = false;
+        }    
     }
 }

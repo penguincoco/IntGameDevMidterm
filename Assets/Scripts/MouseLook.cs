@@ -16,7 +16,7 @@ public class MouseLook : MonoBehaviour
         float mouseX = Input.GetAxis("Mouse X"); //horizontal mouse velocity
         float mouseY = Input.GetAxis("Mouse Y"); //vertical mouse velocity 
 
-        transform.parent.Rotate(0f, mouseX * 10f, 0f);
+        transform.parent.Rotate(0f, mouseX * 5f, 0f);
 
         verticalAngle -= mouseY * 10f; 
         verticalAngle = Mathf.Clamp(verticalAngle, -80f, 80f);

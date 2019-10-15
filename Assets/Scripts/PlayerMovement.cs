@@ -37,8 +37,8 @@ public class PlayerMovement : MonoBehaviour
     void Update()
     {
         //handle basic player movement with WASD/arrow keys 
-        float horizontal = Input.GetAxis("Horizontal"); //move with A/D or left/right
-        float vertical = Input.GetAxis("Vertical"); //move with W/S or up/down
+        float horizontal = Input.GetAxis("Horizontal"); 
+        float vertical = Input.GetAxis("Vertical"); 
 
         myInput = horizontal * transform.right;
         myInput += vertical * transform.forward; 
@@ -108,9 +108,9 @@ public class PlayerMovement : MonoBehaviour
     }
 
     void pickup(GameObject item) {
-        Debug.Log(item.tag);
         if (item.tag == "Win Item") {
             winText.text = "Congrats! \nYou've won! \n Press '1' to restart";
+            this.enabled = false;
         }
         pickupText.text = "";
         holdingObject = item;
