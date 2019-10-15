@@ -48,7 +48,7 @@ public class PlayerMovement : MonoBehaviour
         
         Ray jumpRay = new Ray(transform.position, Vector3.down);
 
-        float jumpRayDist = 1.1f;
+        float jumpRayDist = 1.3f;
 
         Debug.DrawRay(jumpRay.origin, jumpRay.direction * jumpRayDist, Color.blue);
         
