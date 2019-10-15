@@ -8,12 +8,10 @@ using TMPro;
 
 public class PickUpManager : MonoBehaviour
 {
-    //basic idea: put all items titled "win item" into a list
-    //when the size of that list is 0, that means all items have been collected and game is over
-    // Update is called once per frame
     List<GameObject> winItems;
     public GameObject player;
     public TextMeshProUGUI winText;
+    public AudioSource pickupPlayer;
 
     void Start() {
         winItems = new List<GameObject>();
@@ -35,7 +33,7 @@ public class PickUpManager : MonoBehaviour
 
     void OnTriggerEnter(Collider otherObj) {
         if (otherObj.tag == "Win Item") {
-            Debug.Log("Triggering with a win item");
+            pickupPlayer.Play();
             winItems.Remove(otherObj.gameObject);
             Debug.Log(winItems.Count);
             Destroy(otherObj.gameObject);

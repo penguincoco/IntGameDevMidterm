@@ -23,6 +23,8 @@ public class PlayerMovement : MonoBehaviour
     //variable for setting command text when a player is near an object that they can pick up
     public TextMeshProUGUI pickupText;
 
+    //public AudioSource footstepPlayer;
+
     void Start()
     {
         myRigidBody = GetComponent<Rigidbody>();
