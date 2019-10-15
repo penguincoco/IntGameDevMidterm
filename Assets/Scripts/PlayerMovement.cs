@@ -4,7 +4,7 @@ using UnityEngine;
 using TMPro;
 
 //usage: put this on a cube with a Rigidbody
-//intent: let player use WASD/arrows to move cube around
+//intent: control all aspects of player movement including: directional movement, jumping, picking up items 
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -12,7 +12,6 @@ public class PlayerMovement : MonoBehaviour
     Rigidbody myRigidBody;
     Vector3 myInput; 
     bool isGrounded; 
-    //Vector3 jump;
     public float jumpForce; 
 
     //variables to handle player picking up an object
@@ -23,7 +22,6 @@ public class PlayerMovement : MonoBehaviour
 
     //variable for setting command text when a player is near an object that they can pick up
     public TextMeshProUGUI pickupText;
-    //public TextMeshProUGUI winText;
 
     void Start()
     {
@@ -76,12 +74,6 @@ public class PlayerMovement : MonoBehaviour
                 item = rayHit.collider.gameObject;
                 canPickup = true;
             }
-
-            if (rayHit.collider.gameObject.tag == "Win Item") {
-                item = rayHit.collider.gameObject;
-                Debug.Log("found the win item");
-                canPickup = true;
-            }
         }
         else {
             canPickup = false;
@@ -108,10 +100,6 @@ public class PlayerMovement : MonoBehaviour
     }
 
     void pickup(GameObject item) {
-        // if (item.tag == "Win Item") {
-        //     winText.text = "Congrats! \nYou've won! \n Press '1' to restart";
-        //     this.enabled = false;
-        // }
         pickupText.text = "";
         holdingObject = item;
         item.GetComponent<Rigidbody>().useGravity = false;
@@ -126,6 +114,7 @@ public class PlayerMovement : MonoBehaviour
         item.transform.parent = GameObject.Find("Destination").transform;
     }
 
+    //made public so StackItems can call this function
     public void drop(GameObject item) {
         item.GetComponent<Rigidbody>().useGravity = true;
         item.GetComponent<Rigidbody>().isKinematic = false;
