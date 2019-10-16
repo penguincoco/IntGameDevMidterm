@@ -38,7 +38,6 @@ public class StackItems : MonoBehaviour
 
         if (isNear && player.GetComponent<PlayerMovement>().holdingObject != null) {
             stackText.text = "press 'X' to stack items"; 
-            Debug.Log("changing stack text");
         }
         else {
             stackText.text = "";

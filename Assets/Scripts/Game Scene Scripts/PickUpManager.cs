@@ -18,12 +18,10 @@ public class PickUpManager : MonoBehaviour
         foreach (GameObject item in GameObject.FindGameObjectsWithTag("Win Item")) {
             winItems.Add(item);
         }
-        Debug.Log(winItems.Count);
     }
 
     void Update()
     {
-        Debug.Log(winItems.Count);
         if (winItems.Count == 0) {
             player.GetComponent<PlayerMovement>().enabled = false;
             winText.text = "Congrats! \nYou've won! \n Press '1' to restart";
@@ -35,7 +33,6 @@ public class PickUpManager : MonoBehaviour
         if (otherObj.tag == "Win Item") {
             pickupPlayer.Play();
             winItems.Remove(otherObj.gameObject);
-            Debug.Log(winItems.Count);
             Destroy(otherObj.gameObject);
         }
     }

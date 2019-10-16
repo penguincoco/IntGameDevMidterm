@@ -89,7 +89,7 @@ public class PlayerMovement : MonoBehaviour
             pickupText.text = "";
         }
 
-        if (canPickup && holdingObject == null && Input.GetKeyDown(KeyCode.E)) {
+        if (canPickup && holdingObject == null && Input.GetKeyDown(KeyCode.E) && item != null) {
             pickup(item);
         }
         else if (holdingObject != null && Input.GetKeyDown(KeyCode.E)) {
@@ -104,6 +104,7 @@ public class PlayerMovement : MonoBehaviour
     void pickup(GameObject item) {
         pickupText.text = "";
         holdingObject = item;
+        Debug.Log(item.name);
         item.GetComponent<Rigidbody>().useGravity = false;
         item.GetComponent<Rigidbody>().isKinematic = true;
 
