@@ -29,7 +29,6 @@ public class PlayerMovement : MonoBehaviour
     {
         myRigidBody = GetComponent<Rigidbody>();
         canPickup = false;
-        jumpForce = 7.5f;
         isGrounded = true;
         speed = 5f;
     }
@@ -43,25 +42,45 @@ public class PlayerMovement : MonoBehaviour
         myInput = horizontal * transform.right;
         myInput += vertical * transform.forward; 
 
-        //handle player jumping
-        if (Input.GetKeyDown(KeyCode.Space) && isGrounded) {
-            myRigidBody.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
-        }
-        
-        Ray jumpRay = new Ray(transform.position, Vector3.down);
+        jump();
+        objInteractCheck();
+    }
 
+    void FixedUpdate() {
+        myRigidBody.velocity = new Vector3(myInput.x * speed, myRigidBody.velocity.y, myInput.z * speed);
+    }
+
+    //handle player jumping
+    void jump() {
+        Ray jumpRay = new Ray(transform.position, Vector3.down);
+        RaycastHit rayHit = new RaycastHit();
         float jumpRayDist = 1.3f;
 
         Debug.DrawRay(jumpRay.origin, jumpRay.direction * jumpRayDist, Color.blue);
-        
-        if (Physics.Raycast(jumpRay, jumpRayDist)) {
+
+        if (Physics.SphereCast(jumpRay, 0.5f, out rayHit, jumpRayDist)) {
+            Debug.Log("On the ground");
             isGrounded = true;
         }
         else {
+            Debug.Log("in the air");
             isGrounded = false;
         }
 
-        //handle player picking up and dropping objects
+        // if (Physics.Raycast(jumpRay, jumpRayDist)) {
+        //     isGrounded = true;
+        // }
+        // else {
+        //     isGrounded = false;
+        // }
+
+        if (Input.GetKeyDown(KeyCode.Space) && isGrounded) {
+            myRigidBody.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+        }
+    }
+
+     //handle player picking up and dropping objects
+    void objInteractCheck() {
         Ray myRay = new Ray(transform.position, transform.forward); 
         float rayDistance = 2f;
 
@@ -89,16 +108,13 @@ public class PlayerMovement : MonoBehaviour
             pickupText.text = "";
         }
 
+
         if (canPickup && holdingObject == null && Input.GetKeyDown(KeyCode.E) && item != null) {
             pickup(item);
         }
         else if (holdingObject != null && Input.GetKeyDown(KeyCode.E)) {
             drop(holdingObject);
         }
-    }
-
-    void FixedUpdate() {
-        myRigidBody.velocity = new Vector3(myInput.x * speed, myRigidBody.velocity.y, myInput.z * speed);
     }
 
     void pickup(GameObject item) {
@@ -110,7 +126,10 @@ public class PlayerMovement : MonoBehaviour
 
         GameObject destinationObj = GameObject.Find("Destination");
         
-        item.GetComponent<BoxCollider>().enabled = false; 
+        foreach(Collider c in item.GetComponents<BoxCollider>()) {
+            c.enabled = false;
+        }
+
         destinationObj.GetComponent<BoxCollider>().enabled = true;
 
         item.transform.position = destination.position;
@@ -128,7 +147,10 @@ public class PlayerMovement : MonoBehaviour
 
         GameObject destinationObj = GameObject.Find("Destination");
         
-        item.GetComponent<BoxCollider>().enabled = true; 
+        foreach(Collider c in item.GetComponents<BoxCollider>()) {
+            c.enabled = true;
+        }
+
         destinationObj.GetComponent<BoxCollider>().enabled = false;
 
         item.GetComponent<StackItems>().enabled = false;

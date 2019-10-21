@@ -11,11 +11,7 @@ public class StackItems : MonoBehaviour
     public TextMeshProUGUI stackText;
     bool isNear = false;
     public GameObject player; 
-
-    void Start() {
-       
-    }
-    // Update is called once per frame
+    
     void Update()
     {
         Ray myRay = new Ray(transform.position, player.transform.forward); 
@@ -44,7 +40,7 @@ public class StackItems : MonoBehaviour
         }
 
         if (isNear && Input.GetKeyDown(KeyCode.X) && player.GetComponent<PlayerMovement>().holdingObject != null && item != null) {
-            transform.position = item.transform.position + new Vector3(0f, 3f, 0f);
+            transform.position = item.transform.position + new Vector3(0f, 5f, 0f);
             player.GetComponent<PlayerMovement>().drop(gameObject);
             isNear = false;
         }    

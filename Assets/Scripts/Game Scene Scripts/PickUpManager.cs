@@ -10,8 +10,9 @@ public class PickUpManager : MonoBehaviour
 {
     List<GameObject> winItems;
     public GameObject player;
-    public TextMeshProUGUI winText;
     public AudioSource pickupPlayer;
+
+    public Canvas winCanvas;
 
     void Start() {
         winItems = new List<GameObject>();
@@ -23,9 +24,12 @@ public class PickUpManager : MonoBehaviour
     void Update()
     {
         if (winItems.Count == 0) {
-            player.GetComponent<PlayerMovement>().enabled = false;
-            winText.text = "Congrats! \nYou've won! \n Press '1' to restart";
             this.enabled = false;
+            winCanvas.gameObject.SetActive(true);
+            Camera.main.GetComponent<MouseLook>().enabled = false;
+            player.GetComponent<PlayerMovement>().enabled = false;
+            Cursor.lockState = CursorLockMode.None; 
+            Cursor.visible = true;
         }
     }
 
